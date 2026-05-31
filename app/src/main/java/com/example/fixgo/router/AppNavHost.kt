@@ -20,6 +20,7 @@ import com.example.fixgo.AuthState
 import com.example.fixgo.ui.main.MainScreen
 import com.example.user.auth.presentation.ui.DaftarScreen
 import com.example.user.auth.presentation.ui.LoginScreen
+import com.example.user.isiprofile.presentation.ui.IsiProfileScreen
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -35,6 +36,9 @@ fun AppNavHost(
         when (authState) {
             AuthState.LoggedIn -> navController.navigate(RootRoute.Main) {
                 // Hapus semua backstack Auth agar tidak bisa back ke Login
+                popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+            }
+            AuthState.LoggedInButIncomplete -> navController.navigate(RootRoute.IsiProfile) {
                 popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
             }
             AuthState.LoggedOut -> navController.navigate(RootRoute.Auth) {
@@ -81,7 +85,24 @@ fun AppNavHost(
 
         // ── Main Graph ─────────────────────────────────────────────────────
         composable<RootRoute.Main> {
-            MainScreen()
+            MainScreen(
+                onLoggedOut = {
+                    navController.navigate(RootRoute.Auth) {
+                        popUpTo(RootRoute.Main) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // ── Onboarding Graph ───────────────────────────────────────────────
+        composable<RootRoute.IsiProfile> {
+            IsiProfileScreen(
+                onProfileComplete = {
+                    navController.navigate(RootRoute.Main) {
+                        popUpTo(RootRoute.IsiProfile) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

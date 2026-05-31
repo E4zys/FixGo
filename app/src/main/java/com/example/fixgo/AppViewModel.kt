@@ -10,18 +10,26 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
+import com.example.user.isiprofile.domain.usecases.CheckOnboardingStatusUseCase
+
 sealed class AuthState {
     data object Loading : AuthState()
     data object LoggedIn : AuthState()
+    data object LoggedInButIncomplete : AuthState()
     data object LoggedOut : AuthState()
 }
 
-class AppViewModel(supabaseClient: SupabaseClient) : ViewModel() {
+class AppViewModel(
+    supabaseClient: SupabaseClient,
+    private val checkOnboardingStatus: CheckOnboardingStatusUseCase
+) : ViewModel() {
 
     val authState: StateFlow<AuthState> = supabaseClient.auth.sessionStatus
         .map { status -> 
             when (status) {
-                is SessionStatus.Authenticated -> AuthState.LoggedIn
+                is SessionStatus.Authenticated -> {
+                    if (checkOnboardingStatus()) AuthState.LoggedIn else AuthState.LoggedInButIncomplete
+                }
                 is SessionStatus.Initializing -> AuthState.Loading
                 is SessionStatus.NotAuthenticated -> AuthState.LoggedOut
                 else -> AuthState.LoggedOut

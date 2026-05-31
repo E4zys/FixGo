@@ -20,4 +20,8 @@ class UserRepositoryImpl(private val dataSource: UserDataSource) : UserRepositor
         val loggedInModel = dataSource.loginUser(payloadModel)
         loggedInModel.toDomain()
     }
+
+    override suspend fun logout(): Result<Unit> = runCatching {
+        dataSource.logout()
+    }
 }

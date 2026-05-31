@@ -33,4 +33,8 @@ class UserDataSourceImpl(private val supabaseClient: SupabaseClient) : UserDataS
             token = supabaseClient.auth.currentAccessTokenOrNull()
         )
     }
+
+    override suspend fun logout() {
+        supabaseClient.auth.signOut()
+    }
 }
