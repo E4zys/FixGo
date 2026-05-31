@@ -16,7 +16,7 @@ import com.example.user.home.HomeScreen
 import com.example.user.riwayat.RiwayatContent
 
 @Composable
-fun MainScreen() {
+fun MainScreen(onLoggedOut: () -> Unit = {}) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val destination = backStackEntry?.destination
@@ -68,7 +68,7 @@ fun MainScreen() {
             composable<MainRoute.Home> { HomeScreen() }
             composable<MainRoute.Aktivitas> { AktivitasContent() }
             composable<MainRoute.Riwayat> { RiwayatContent() }
-            composable<MainRoute.Akun> { AkunContent() }
+            composable<MainRoute.Akun> { AkunContent(onLoggedOut = onLoggedOut) }
         }
     }
 }

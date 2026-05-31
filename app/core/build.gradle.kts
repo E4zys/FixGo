@@ -56,8 +56,8 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material.icons.extended)
+    api(libs.androidx.compose.material3)
+    api(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.ui.text.google.fonts)
     implementation(libs.androidx.datastore.preferences)
 
@@ -77,4 +77,5 @@ dependencies {
     
     api(platform(libs.supabase.bom))
     api(libs.supabase.auth)
+    api(libs.supabase.postgrest)
 }
