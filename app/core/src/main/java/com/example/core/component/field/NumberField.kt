@@ -36,21 +36,37 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.core.R
 import com.example.core.component.Validators
 import com.example.core.theme.FixGoTheme
 
+import com.example.core.component.FieldValidator
+
 @Composable
-fun NumberField(modifier: Modifier = Modifier, placeHolder: String) {
-    var text by remember { mutableStateOf("") }
+fun NumberField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    placeHolder: String,
+    validators: List<FieldValidator> = emptyList(),
+) {
+    val containerColor = Color(0xFFF1F5F9)
+
+    var isError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    val isError = errorMessage != null
 
-    // Using layout from 'pasted image 3': separate box for +62 and input field
-    // Background color: Light Grey (Secondary100 or similar)
-    val containerColor = Color(0xFFF1F5F9) // Manually setting closer to screenshot if theme differs, or use MaterialTheme.colorScheme.secondaryContainer
+    Column(modifier = modifier.wrapContentHeight()) {
+        // Label di luar field
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
 
-    Column(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -89,13 +105,13 @@ fun NumberField(modifier: Modifier = Modifier, placeHolder: String) {
 
             // Phone Number Input Field
             OutlinedTextField(
-
-                value = text,
+                value = value,
                 onValueChange = { newText ->
                     if (newText.all { it.isDigit() }) {
-                        text = newText
-                        val validation = Validators.validatePhone(text)
-                        errorMessage = validation.errorMessage
+                        onValueChange(newText)
+                        val failed = validators.map { it(newText) }.firstOrNull { !it.isValid }
+                        isError = failed != null
+                        errorMessage = failed?.errorMessage
                     }
                 },
                 modifier = Modifier
@@ -105,21 +121,15 @@ fun NumberField(modifier: Modifier = Modifier, placeHolder: String) {
                         color = if (isError) MaterialTheme.colorScheme.error else Color.Transparent,
                         shape = RoundedCornerShape(12.dp)
                     ),
-                placeholder = {
-                    Text(placeHolder, color = Color.Gray)
-                },
+                placeholder = { Text(placeHolder, color = Color.Gray) },
                 singleLine = true,
                 isError = isError,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = containerColor,
                     unfocusedContainerColor = containerColor,
                     errorContainerColor = containerColor,
-
-                    // Hilangkan border bawaan saat normal
                     focusedBorderColor = Color.Transparent,
                     unfocusedBorderColor = Color.Transparent,
-
-                    // Border akan otomatis jadi merah saat parameter isError = true
                     errorBorderColor = Color.Transparent
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -127,10 +137,9 @@ fun NumberField(modifier: Modifier = Modifier, placeHolder: String) {
             )
         }
 
-        // Error Message
-        if (isError) {
+        if (isError && errorMessage != null) {
             Text(
-                text = errorMessage ?: "",
+                text = errorMessage!!,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(start = 108.dp, top = 4.dp)
@@ -144,9 +153,12 @@ fun NumberField(modifier: Modifier = Modifier, placeHolder: String) {
 private fun NumberFieldPrev() {
     FixGoTheme {
         Column() {
-
-            NumberField(placeHolder = "Nomor Telpon")
+            NumberField(
+                value = "",
+                onValueChange = {},
+                label = "Nomor Handphone",
+                placeHolder = "Nomor Telpon"
+            )
         }
     }
-
 }
