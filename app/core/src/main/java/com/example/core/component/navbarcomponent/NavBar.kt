@@ -36,6 +36,10 @@ import com.example.core.R
 @Composable
 fun NavBar(
     modifier: Modifier = Modifier,
+    isHomeSelected: Boolean = false,
+    isAktivitasSelected: Boolean = false,
+    isRiwayatSelected: Boolean = false,
+    isAkunSelected: Boolean = false,
     onHomeClick: () -> Unit,
     onSearchClick: () -> Unit,
     onNotifClick: () -> Unit,
@@ -55,13 +59,13 @@ fun NavBar(
                     itemText = "Beranda",
                     idPainter = R.drawable.home,
                     onClick = onHomeClick,
-                    isSelected = true
+                    isSelected = isHomeSelected
                 )
                 ItemNavBar(
                     itemText = "Aktivitas",
                     idPainter = R.drawable.clipboard_list,
-                    onClick = onHomeClick,
-                    isSelected = true
+                    onClick = onSearchClick,
+                    isSelected = isAktivitasSelected
                 )
 
                 Spacer(modifier = Modifier.width(68.dp))
@@ -69,16 +73,15 @@ fun NavBar(
                 ItemNavBar(
                     itemText = "Riwayat",
                     idPainter = R.drawable.clock,
-                    onClick = onHomeClick,
-                    isSelected = true
+                    onClick = onNotifClick,
+                    isSelected = isRiwayatSelected
                 )
                 ItemNavBar(
                     itemText = "Akun",
                     idPainter = R.drawable.user,
-                    onClick = onHomeClick,
-                    isSelected = true
+                    onClick = onProfileClick,
+                    isSelected = isAkunSelected
                 )
-
             }
             Box(modifier = Modifier.height(34.dp).fillMaxWidth())
         }
